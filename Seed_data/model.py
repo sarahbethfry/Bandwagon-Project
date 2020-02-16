@@ -40,7 +40,7 @@ class Venue(db.Model):
     city = db.Column(db.String(100), nullable=True)
     lat = db.Column(db.Float, nullable=False)
     lng = db.Column(db.Float, nullable=False)
-
+    events = db.relationship('Event', backref='venues')
     def __repr__(self):
         return f"<Venue: {self.venue_name}>"
 
@@ -90,7 +90,7 @@ class UserEvents(db.Model):
 
 ###############################################################
 
-if __name__ == "__manin__"
+if __name__ == "__main__"
 """Helper function that allows you to run this module interactively."""
     from server import app
     connect_to_db(app)
