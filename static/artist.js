@@ -1,7 +1,7 @@
 "use strict"
 
 const API_BASE = "https://api.songkick.com/api/3.0";
-const API_KEY = "nUKTS3tfvx70pUKG";
+const API_KEY = config.songkick_key;
 
 $("#artist_form").on('submit', (evt) => {
     evt.preventDefault();
