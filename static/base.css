@@ -1,4 +1,14 @@
 #map {
-  width: 600px;
-  height: 400px;
+  width: 1000px;
+  height: 600px;
+}
+
+.eventBoxes {
+  position: static;
+  background-color: #CCC;
+  text-align: center;
+  border-bottom: 2px solid #f5f6f7;
+  padding: 8px 20px;
+  margin: 0;
+  min-height: auto;
 }

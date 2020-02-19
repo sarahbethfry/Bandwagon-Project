@@ -26,8 +26,8 @@ $("#artist_form").on('submit', (evt) => {
             for(let event of allEvents){
                 $('#artistEvents').append(
                     `<li class="eventBoxes">${event.displayName}<br/>
-                                                                  ${event.venue.lat}<br/>
-                                                                  ${event.venue.lng}</li>`);
+                                            ${event.venue.lat}<br/>
+                                            ${event.venue.lng}</li>`);
             };
             
             console.log("SUCCESS", res);
@@ -46,9 +46,3 @@ function promisifiedGet(url, data) {
         });    
     });
 }
-
-// const event_url = "https://api.songkick.com/api/3.0/artists/" + artist_id + "/calendar.json?apikey=nUKTS3tfvx70pUKG"
-
-// $.getJSON(event_url, function(data) {
-//     console.log(data);
-// });

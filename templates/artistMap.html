@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block head %}
+
+ <script src="/static/config.js"></script>
+ <script src="/static/artistMap.js"></script>
+  <script 
+    async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap">
+  </script>
+  
+
+{% endblock %}
+
+{% block body %}
+ <h2>Map Your Artists</h2>
+    <div class="artist_container">
+        <form id="artist_form">
+          Artist Name:<input id="artist_name">
+          </input> 
+          <br/>
+          <button id="submit" type="submit">Submit</button>
+        </form>
+
+  <main>
+    <section class="map">
+        <div id="map"></div>
+    </section>
+  </main>
+   <h2>Upcoming Concerts</h2>
+        <ol id="artistEvents">
+         
+        </ol>
+
+{% endblock %}

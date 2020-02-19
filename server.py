@@ -8,13 +8,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("maps.html")
-
-@app.route("/artists")
-def search_artists():    
-    return render_template("artist.html")
-
-
+    return render_template("artistMap.html")
 
 
 if __name__ == "__main__":

@@ -1,25 +1,15 @@
 "use strict"
-// const your_api_key = nUKTS3tfvx70pUKG
-// const artist_id = 8507413
-
-// $.getJSON("https://api.songkick.com/api/3.0/artists/{artist_id}/calendar.json?apikey={your_api_key}", 
-//     function(data){
-//     const lat = data.resultsPage.results.event[0].venue.lat
-//     const lng = data.resultsPage.results.event[0].venue.lng
-
-// });
-
 
 function initMap() {
-  const setCoords = {
-    lat: 37.7887459,
-    lng: -122.4115852
-  };
+ 
 
   const basicMap = new google.maps.Map(
     document.querySelector('#map'),
     {
-        center: setCoords,
+        center: {
+        lat: 37.601773,
+        lng: -122.202870
+        },
         zoom: 12,
         styles: [
             {elementType: 'geometry', stylers: [{color: '#242f3e'}]},
@@ -109,7 +99,7 @@ function initMap() {
   });
 
   const venWind = new google.maps.InfoWindow({
-    content: '<h1>Show #1</h1>'  
+    content: '<h1>${event.displayName</h1>' 
   });
 
   venMarker.addListener('mouseover', () => {

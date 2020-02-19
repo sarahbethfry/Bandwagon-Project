@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block head %}
 
-<!-- <script src="templates/script.js"></script>  --> 
 <link rel="stylesheet" href="static/base.css">  
 
 <script src="static/maps.js"></script>
+ 
 <script 
     async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap">
@@ -26,5 +26,6 @@
     <img class="picture">
     <p class="artist_deets"></p>
 </div>
-
+  <script src="/static/config.js"></script>
+  <script src="/static/artist.js"></script>
 {% endblock %}
