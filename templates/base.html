@@ -6,6 +6,10 @@
     
     <link rel="stylesheet" href="/static/base.css">
     
+    <script 
+    async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap">
+    </script>
 
     <script
       src="https://code.jquery.com/jquery-3.4.1.js"
@@ -16,6 +20,18 @@
     {% endblock %}
   </head>
   <body>
+    {% if "user_id" in session %}
+      <a href="/logout">Logout</a>
+    {% else %}
+      <a href="/login"> Click here to dance</a>
+      <a href="/register"> New Dancer?</a>
+    {% endif %}
+
+    <hr>
+    {% for flash in get_flashed_messages() %}
+      {{ flash }}
+    {% endfor %}
+
     {% block body %}
     {% endblock %}
    

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<h1>New to Bandwagon?</h1>
+<br>
+<h1>Fill out form to register</h1>         
+  <form action="register" method="POST">
+    <label> Username: </label>
+    <input type="text" name="username"/>
+  <br>
+    <label> Email: </label>
+    <input type="email" name="email"/>    
+  <br>
+    <label> Password: </label>
+    <input type="password" name="password"/>      
+  <br>
+  <div>
+    <button id="reg-submit" type="submit"> Register</button>
+ </div>
+ </form> 
+
+{% endblock %}
