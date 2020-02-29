@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block head %}
+<script src="/static/config.js"></script>
+
+<script src="/static/cityMap.js"></script>
+
+<script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap"
+></script>
+
+{% endblock %} {% block body %}
+<h2>Map Your City</h2>
+<div class="city_date_container">
+    <form id="city_date_form">
+        City: <input id="city_name" />
+
+        <br />
+        Date(s): <input type="date" id="start" name="startDate" />
+        <input type="date" id="end" name="endDate" />
+        <br />
+        <button id="city_date_submit" type="submit">Submit</button>
+    </form>
+</div>
+<main>
+    <section class="map">
+        <div id="map"></div>
+    </section>
+</main>
+
+{% endblock %}

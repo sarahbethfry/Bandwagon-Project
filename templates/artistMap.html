@@ -1,30 +1,32 @@
-{% extends 'base.html' %}
-{% block head %}
+{% extends 'base.html' %} {% block head %}
 
- <script src="/static/config.js"></script>
- <script src="/static/artistMap.js"></script>
-  <script 
-    async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap">
-  </script>
-  
+<script src="/static/config.js"></script>
+<script src="/static/artistMap.js"></script>
 
-{% endblock %}
+<script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap"
+></script>
 
-{% block body %}
- <h2>Map Your Artists</h2>
-    <div class="artist_container">
-        <form id="artist_form">
-          Artist Name:<input id="artist_name">
-          </input> 
-          <br/>
-          <button id="submit" type="submit">Submit</button>
-        </form>
+{% endblock %} {% block body %}
+<h2>Map Your Artists</h2>
+<div class="artist_container">
+    <form id="artist_form">
+        Artist Name:<input id="artist_name" />
 
-  <main>
-    <section class="map">
-        <div id="map"></div>
-    </section>
-  </main>
+        <br />
+        <button id="submit" type="submit">Submit</button>
+    </form>
 
-{% endblock %}
+    <main>
+        <section class="map">
+            <div id="map"></div>
+        </section>
+    </main>
+    <div class="similar_artists">
+        <ul id="sm_artist_list"></ul>
+    </div>
+
+    {% endblock %}
+</div>

@@ -1,4 +1,4 @@
-""" Model for database in Songpunch project"""
+""" Model for database in Bandwagon project"""
 
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -8,7 +8,7 @@ db = SQLAlchemy()
 
 # Connect the database to our Flask app.
 def connect_to_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///songpunch'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///bandwagon'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ECHO'] = False
     db.app = app
@@ -40,10 +40,8 @@ class UserEvents(db.Model):
     event_name = db.Column(db.String(100), nullable=True)
     date = db.Column(db.DateTime)
     venue_name = db.Column(db.String(100), nullable=False)
-    lat = db.Column(db.Float, nullable=False)
-    lng = db.Column(db.Float, nullable=False)
-    songkick_url = db.Column(db.String(200), nullable=True)
-    artist_id = db.Column(db.Integer, nullable=False)
+    songkick_url = db.Column(db.String(500), nullable=True)
+    
 
     user = db.relationship("User", backref="user_events")
 
