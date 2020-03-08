@@ -1,12 +1,14 @@
-'use strict';
+let basicMap
 
 function initMap() {
-    const basicMap = new google.maps.Map(document.querySelector('#map'), {
+    basicMap = new google.maps.Map(document.querySelector('#map'), {
         center: {
-            lat: 37.601773,
-            lng: -122.20287,
+            lat: 39.8228513,
+            lng: -98.5868283,
         },
-        zoom: 12,
+        zoom: 3,
+        zoomControl: false,
+        scaleControl: true,
         styles: [
             { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
             {
@@ -93,20 +95,5 @@ function initMap() {
                 stylers: [{ color: '#17263c' }],
             },
         ],
-    });
-
-    const venMarker = new google.maps.Marker({
-        position: setCoords,
-        map: basicMap,
-    });
-
-    const venWind = new google.maps.InfoWindow({
-        content: '<h1>${event.displayName</h1>',
-    });
-
-    venMarker.addListener('mouseover', () => {
-        venWind.open(basicMap, venMarker);
-    });
+    })
 }
-
-// function findArtistEvents

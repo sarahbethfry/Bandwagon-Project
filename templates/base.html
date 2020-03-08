@@ -16,13 +16,16 @@
     </head>
     <body>
         {% if "user_id" in session %}
-        <a href="/logout">Logout</a>
-        <a href="/userevents/{{session['user_id']}}">
+        <a id="reglog" href="/logout">Logout</a>
+        <a id="reglog" href="/userevents/{{session['user_id']}}">
             Check your favorite events</a
         >
         {% else %}
-        <a href="/login"> Click here to dance</a>
-        <a href="/register"> New Dancer?</a>
+        <a id="reglog" href="/login"> Click here to dance</a>
+        <a id="reglog" href="/register"> New Dancer?</a>
+        </br>
+        <a href="/artist"> Artist Search</a>
+        <a href="/citydate"> City/Date Search</a>
         {% endif %}
 
         <hr />

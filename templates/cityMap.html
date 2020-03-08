@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block head %}
 <script src="/static/config.js"></script>
-
+<script src="/static/map.js"></script>
 <script src="/static/cityMap.js"></script>
 
 <script
@@ -10,7 +10,7 @@
 ></script>
 
 {% endblock %} {% block body %}
-<h2>Map Your City</h2>
+<h2>Shows In Your City</h2>
 <div class="city_date_container">
     <form id="city_date_form">
         City: <input id="city_name" />
@@ -19,7 +19,7 @@
         Date(s): <input type="date" id="start" name="startDate" />
         <input type="date" id="end" name="endDate" />
         <br />
-        <button id="city_date_submit" type="submit">Submit</button>
+        <button id="submit" type="submit">Submit</button>
     </form>
 </div>
 <main>

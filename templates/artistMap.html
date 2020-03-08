@@ -1,7 +1,8 @@
 {% extends 'base.html' %} {% block head %}
 
 <script src="/static/config.js"></script>
-<script src="/static/artistMap.js"></script>
+<script src="/static/map.js"></script>
+<script src="/static/artist.js"></script>
 
 <script
     async
@@ -14,11 +15,10 @@
 <div class="artist_container">
     <form id="artist_form">
         Artist Name:<input id="artist_name" />
-
         <br />
         <button id="submit" type="submit">Submit</button>
     </form>
-
+    <div id="artist_image"></div>
     <main>
         <section class="map">
             <div id="map"></div>
@@ -27,6 +27,5 @@
     <div class="similar_artists">
         <ul id="sm_artist_list"></ul>
     </div>
-
-    {% endblock %}
 </div>
+{% endblock %}

@@ -13,6 +13,14 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     return render_template("artistMap.html")
 
+@app.route("/artist")
+def artist_search():
+    return render_template("artistMap.html")
+
+@app.route("/citydate")
+def city_date_search():
+    return render_template("cityMap.html")
+
 @app.route("/register", methods=['GET'])    
 def register_page():
     return render_template("register_form.html")
