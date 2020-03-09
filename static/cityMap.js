@@ -9,74 +9,136 @@ window.onload = function() {
     init();
 };
 
+let mapMarkers = [];
+
 async function init() {
-    let mapMarkers = [];
-
-    // convert to vanilla
     const form = document.getElementById('city_date_form');
-
     form.onsubmit = async evt => {
         evt.preventDefault();
-        console.log('test');
+
         const searchValue = getInputValue();
+        const searchMinDate = getMinDateValue();
+        const searchMaxDate = getMaxDateValue();
         const metroId = await citySearch(searchValue);
-        const locationEventsByDate = await dateSearch(metroId);
-        console.log(locationEventsByDate);
-        await plotAllEvents(locationEventsByDate, mapMarkers);
+
+        const totalPages = await dateSearch(
+            metroId,
+            searchMinDate,
+            searchMaxDate
+        );
+        console.log('pages', totalPages);
+        const allEvents = await paginateEvents(totalPages, metroId);
+        console.log(allEvents);
+        clearMap(mapMarkers);
+        const centerCoords = getCenterCoords(allEvents);
+        mapMarkers = createMapMarkers(allEvents);
+
+        plotAllEvents(centerCoords, mapMarkers);
     };
 }
 
 async function citySearch(value) {
     const result = await fetchJSON(
-        `${API_BASE}/search/locations.json?&query=${value}/apikey=${API_KEY}`
+        `${API_BASE}/search/locations.json?&query=${value}&apikey=${API_KEY}`
     );
     return result.resultsPage.results.location[0].metroArea.id;
 }
-async function dateSearch(metroId) {
-    const result = await fethchJSON(
-        `${API_BASE}/search/locations.json?&query=${encodeURI(
-            value
-        )}&apikey=${API_KEY}&min_date=${encodeURI(
-            document.getElementById('start').value
-        )}&max_date=${encodeURI(document.getElementById('end').value)}`
+async function dateSearch(metroId, minDate, maxDate) {
+    const result = await fetchJSON(
+        `${API_BASE}/metro_areas/${metroId}/calendar.json?apikey=${API_KEY}&min_date=${encodeURI(
+            minDate
+        )}&max_date=${encodeURI(maxDate)}`
     );
-    return resultsPage.results.event;
+    const totalNumber = result.resultsPage.totalEntries;
+    console.log(totalNumber);
+
+    if (totalNumber > 50) {
+        return ~~(totalNumber / 50) + 1;
+    }
+
+    return 1;
 }
 
-async function plotAllEvents(allEvents, mapMarkers) {
-    await clearMap(mapMarkers);
-    const cityLat = allEvents.resultsPage.results.event[5].location.lat;
-    const cityLng = allEvents.resultsPage.results.event[5].location.lng;
-    const cityCoords = new google.maps.LatLng(cityLat, cityLng);
-    basicMap.setCenter(cityCoords);
-    basicMap.setZoom(12);
+async function paginateEvents(totalPages, metroId) {
+    const totalEvents = [];
+    const pageURLs = [];
+
+    for (let i = 1; i <= totalPages; i++) {
+        pageURLs.push(
+            `${API_BASE}/metro_areas/${metroId}/calendar.json?apikey=${API_KEY}&min_date=${encodeURI(
+                document.getElementById('start').value
+            )}&max_date=${encodeURI(
+                document.getElementById('end').value
+            )}&page=${i}`
+        );
+    }
+
+    for await (let url of pageURLs) {
+        const result = await fetchJSON(url);
+        const allEvents = result.resultsPage.results.event;
+        totalEvents.push(...allEvents);
+    }
+
+    return totalEvents;
+}
+
+function getCenterCoords(allEvents) {
+    const cityLat = allEvents[2].location.lat;
+    const cityLng = allEvents[2].location.lng;
+    return new google.maps.LatLng(cityLat, cityLng);
+}
+
+function createMapMarkers(allEvents) {
+    const mapMarkers = [];
+    let venueObj = {};
 
     for (let event of allEvents) {
-        let venueLat = event.venue.lat;
-        let venueLng = event.venue.lng;
+        if (venueObj[event.venue.id] !== undefined) {
+            venueObj[event.venue.id].events.push(event);
+        } else {
+            venueObj[event.venue.id] = { venue: {}, events: [] };
+            venueObj[event.venue.id].venue = event.venue;
+            venueObj[event.venue.id].events.push(event);
+        }
+    }
 
-        // if (allEvents.length < 50) {
-        const showInfoContent = `
-                    <div class="window-content">
-                    <p class="show-info">
-                    <h1> <b>${event.performance[0].displayName}</b></h1>
-                      <br> 
-                      <p>${event.venue.displayName}</p>
-                      <p>${event.location.city}</p>
-                      <span>${event.start.date} ${event.start.time}</span>
-                      <br>
-                    </p>
-                      <span><button id="songkick_link" type="submit">Get more info!</button></span>
-                      <span><button id="user_events" type="submit">Add to your shows!</button></span>
-                    </div>
-                    `;
-        // }
+    for (let venue in venueObj) {
+        const currentVenue = venueObj[venue];
+
+        let venueLat = currentVenue.venue.lat;
+        let venueLng = currentVenue.venue.lng;
 
         if (venueLat === null || venueLng === null) {
-            console.log(event);
-            venueLat = event.location.lat;
-            venueLng = event.location.lng;
+            venueLat = currentVenue.events[0].location.lat;
+            venueLng = currentVenue.events[0].location.lng;
         }
+
+        const venueList = currentVenue.events.map(function(event) {
+            return `<li>
+               <span> 
+                <a target="_blank"href=${
+                    event.uri
+                }>${moment(event.start.date).format('ddd MMM D')}</a> 
+                    ${event.displayName}
+                <button id="user_events" type="submit">Add to your shows!</button>
+                </span>
+            </li>`;
+        });
+
+        const showInfoContent = `
+                    <div id="window-container"> 
+                    <div class="window-title">${
+                        currentVenue.venue.displayName
+                    }</div>
+                    <div class="window-subtitle"> Shows </div>
+                    <div id="window_content"> 
+
+                    <ul>${venueList.toString()}
+                    </ul>
+                    </div>
+                    </div>
+                    `;
+
         const showInfo = new google.maps.InfoWindow();
         const showMarker = new google.maps.Marker({
             position: {
@@ -88,24 +150,36 @@ async function plotAllEvents(allEvents, mapMarkers) {
 
         showMarker.setAnimation(google.maps.Animation.DROP);
         showMarker.addListener('mouseover', () => {
-            showInfo.close();
             showInfo.setContent(showInfoContent);
-            showInfo.open(map, showMarker);
+            showInfo.open(basicMap, showMarker);
+        });
+
+        showMarker.addListener('mouseout', () => {
+            setTimeout(function() {
+                showInfo.close();
+            }, 2000);
         });
 
         mapMarkers.push(showMarker);
     }
+    return mapMarkers;
+}
+
+function plotAllEvents(cityCoords, mapMarkers) {
+    basicMap.setCenter(cityCoords);
+    basicMap.setZoom(12);
+
     for (let i = 0; i < mapMarkers.length; i++) {
         mapMarkers[i].setMap(basicMap);
     }
 }
 
-async function clearMap(mapMarkers, polyline) {
+function clearMap(mapMarkers) {
     for (let i = 0; i < mapMarkers.length; i++) {
         mapMarkers[i].setMap(null);
     }
 
-    mapMarkers.length = 0;
+    mapMarkers.length = [];
 }
 
 function fetchJSON(url, options = {}) {
@@ -154,4 +228,11 @@ function setEndDate() {
 
 function getInputValue() {
     return document.getElementById('city_name').value;
+}
+
+function getMinDateValue() {
+    return document.getElementById('start').value;
+}
+function getMaxDateValue() {
+    return document.getElementById('end').value;
 }

@@ -7,15 +7,10 @@
         <link rel="stylesheet" href="/static/base.css" />
 
         <script
-            src="https://code.jquery.com/jquery-3.4.1.js"
-            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-            crossorigin="anonymous"
+            src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"          
         ></script>
 
-        {% block head %} {% endblock %}
-    </head>
-    <body>
-        {% if "user_id" in session %}
+            {% if "user_id" in session %}
         <a id="reglog" href="/logout">Logout</a>
         <a id="reglog" href="/userevents/{{session['user_id']}}">
             Check your favorite events</a
@@ -24,12 +19,17 @@
         <a id="reglog" href="/login"> Click here to dance</a>
         <a id="reglog" href="/register"> New Dancer?</a>
         </br>
-        <a href="/artist"> Artist Search</a>
+          <a href="/artist"> Artist Search</a>
         <a href="/citydate"> City/Date Search</a>
         {% endif %}
+        {% block head %} {% endblock %}
+    </head>
+    <body>
 
         <hr />
-        {% for flash in get_flashed_messages() %} {{ flash }} {% endfor %} {%
+        {% for flash in get_flashed_messages() %} {{ flash }} {% endfor %} 
+
+        {%
         block body %} {% endblock %}
     </body>
 </html>
