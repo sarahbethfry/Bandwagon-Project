@@ -133,13 +133,24 @@ function createPolyline(mapMarkers) {
             lng: marker.position.lng(),
         };
     });
+    const dashedLine = {
+        path: 'M 0,-1 0,1',
+        strokeOpacity: 1,
+        scale: 4,
+        strokeColor: '#813772',
+    };
 
     return new google.maps.Polyline({
         path: coordList,
         geodesic: true,
-        strokeColor: '#ff0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 5,
+        strokeOpacity: 0,
+        icons: [
+            {
+                icon: dashedLine,
+                offset: '0',
+                repeat: '20px',
+            },
+        ],
     });
 }
 
@@ -188,9 +199,8 @@ function createMapMarkers(allEvents) {
                 lng: venueLng,
             },
             icon: {
-                url:
-                    'https://png.pngtree.com/png-clipart/20190611/original/pngtree-brown-tourist-bus-png-image_3219107.jpg',
-                scaledSize: new google.maps.Size(64, 64),
+                url: '/static/images/vw minibus or camper_5287679.png',
+                scaledSize: new google.maps.Size(55, 55),
             },
         });
 
