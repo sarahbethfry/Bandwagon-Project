@@ -1,4 +1,4 @@
-#!/home/vagrant/src/songkick_play/env/bin/python3.6
+#!/home/vagrant/src/bandwagon/env/bin/python3.6
 
 # -*- coding: utf-8 -*-
 import re

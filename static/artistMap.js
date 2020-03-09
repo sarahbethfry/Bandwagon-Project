@@ -3,21 +3,153 @@
 const API_BASE = 'https://api.songkick.com/api/3.0';
 const API_KEY = config.songkick_key;
 
-const b64 = btoa(
-    '9a0bf7f525fe4874a0650c32dcc94526:cc8ccd2d48e14b1bb81377c225c17e3c'
-);
-
+// spotify client Id base 64 encoded
+const spotifyB64 = btoa(config.spotify_key);
 const spotifyBase = 'https://accounts.spotify.com/api/token';
 
+// automatically runs to get spotify access token in the background,
+// then pushes it to main fnx.
 window.onload = function() {
-    getAccessToken().then(accessToken => {
+    getAccessToken().then(async accessToken => {
         init(accessToken);
     });
 };
-function plotAllEvents(allEvents, mapMarkers, polyline) {
+
+let mapMarkers = [];
+let polyline;
+
+async function init(accessToken) {
+    // Holds coordinates for all events
+    // Needed to clear and repopulate with each search
+
+    // Grab the artist that the user inputs in the artist form.
+    // Add event when user pushes submit but prevent it as default.
+    document
+        .getElementById('artist_form')
+        .addEventListener('submit', async evt => {
+            evt.preventDefault();
+
+            const searchValue = getInputValue();
+
+            // Songkick address that returns artist info when search name as a query.
+            const artistId = await searchArtistId(searchValue);
+            const allEvents = await getArtistCalendar(artistId);
+
+            clearMap(mapMarkers, polyline);
+
+            const centerCoords = getCenterCoords(allEvents);
+
+            mapMarkers = createMapMarkers(allEvents);
+            polyline = createPolyline(mapMarkers);
+
+            plotAllEvents(centerCoords, mapMarkers, polyline);
+
+            const artistImageUrl = await spotifyArtistImage(
+                accessToken,
+                searchValue
+            );
+
+            document.getElementById(
+                'artist_image'
+            ).innerHTML = `<img width="200" height="200" src="${artistImageUrl}"/>`;
+
+            await getSimilarArtistsOnTour(artistId);
+        });
+}
+
+function fetchJSON(url, options = {}) {
+    return fetch(url, options).then(res => res.json());
+}
+
+function getAccessToken() {
+    return fetchJSON(spotifyBase, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${spotifyB64}`,
+        },
+        body: 'grant_type=client_credentials',
+    }).then(res => {
+        return res.access_token;
+    });
+}
+
+function getInputValue() {
+    return document.getElementById('artist_name').value;
+}
+
+async function searchArtistId(value) {
+    const result = await fetchJSON(
+        `${API_BASE}/search/artists.json?apikey=${API_KEY}&query=${encodeURI(
+            value
+        )}`
+    );
+    return result.resultsPage.results.artist[0].id;
+}
+
+async function spotifyArtistImage(spotifyAccessToken, value) {
+    const spotifyArtistUrl = `https://api.spotify.com/v1/search?q=${encodeURI(
+        value
+    )}&type=artist`;
+    const spotifyArtistResults = await fetchJSON(spotifyArtistUrl, {
+        headers: { Authorization: `Bearer ${spotifyAccessToken}` },
+    });
+    return spotifyArtistResults.artists.items[0].images[0].url;
+}
+
+async function getSimilarArtistsOnTour(artistId) {
+    const result = await fetchJSON(
+        `${API_BASE}/artists/${artistId}/similar_artists.json?apikey=${API_KEY}`
+    );
+    const simArtDict = {};
+    const allSimilar = result.resultsPage.results.artist;
+    for (let eachArtist of allSimilar) {
+        if (!!eachArtist.onTourUntil) {
+            document.getElementById('sm_artist_list').innerHTML +=
+                '<li>' + eachArtist.displayName + '</li>';
+        }
+    }
+}
+
+async function getArtistCalendar(artistId) {
+    const result = await fetchJSON(
+        `${API_BASE}/artists/${artistId}/calendar.json?apikey=${API_KEY}`
+    );
+    return result.resultsPage.results.event;
+}
+
+function getCenterCoords(allEvents) {
+    // grab the venue lat and lng for each event
+    return new google.maps.LatLng(
+        allEvents[0].venue.lat,
+        allEvents[0].venue.lng
+    );
+}
+
+function createPolyline(mapMarkers) {
+    const coordList = mapMarkers.map(function(marker) {
+        return {
+            lat: marker.position.lat(),
+            lng: marker.position.lng(),
+        };
+    });
+
+    return new google.maps.Polyline({
+        path: coordList,
+        geodesic: true,
+        strokeColor: '#ff0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 5,
+    });
+}
+
+function createMapMarkers(allEvents) {
+    const mapMarkers = [];
+
     for (let event of allEvents) {
         let venueLat = event.venue.lat;
         let venueLng = event.venue.lng;
+        // the text inside every infowindow
 
         const showInfoContent = `
                   <div class="window-content">
@@ -40,227 +172,62 @@ function plotAllEvents(allEvents, mapMarkers, polyline) {
                     <button id="add_user_events" type="submit">Add to your shows!</button>
                     </form>
                   `;
-
+        // for the events that dont play at a veune (festivals)
+        // change the marker lat and lng to the city lat and lng.
         if (venueLat === null || venueLng === null) {
-            console.log(event);
             venueLat = event.location.lat;
             venueLng = event.location.lng;
         }
+
         const showInfo = new google.maps.InfoWindow();
+        // set each lat and lng in a marker
         const showMarker = new google.maps.Marker({
             position: {
                 animation: google.maps.Animation.DROP,
                 lat: venueLat,
                 lng: venueLng,
             },
+            icon: {
+                url:
+                    'https://png.pngtree.com/png-clipart/20190611/original/pngtree-brown-tourist-bus-png-image_3219107.jpg',
+                scaledSize: new google.maps.Size(64, 64),
+            },
         });
 
+        // add above text to info windows and add info windows to markers
+        // show infowindows when you mouseover markers
         showMarker.setAnimation(google.maps.Animation.DROP);
         showMarker.addListener('mouseover', () => {
             showInfo.close();
             showInfo.setContent(showInfoContent);
-            showInfo.open(map, showMarker, polyline);
+            showInfo.open(map, showMarker);
         });
-
+        //  put all marker coordinates in an array
         mapMarkers.push(showMarker);
     }
-}
-function init(spotifyAccessToken) {
-    // Create info window object that will hold all show info.
 
-    console.log(spotifyAccessToken);
-    // Holds coordinates for all events
-    // Needed to clear and repopulate with each search
-    let mapMarkers = [];
-    let polyline;
-
-    document.getElementById('artist_form').addEventListener('submit', evt => {
-        evt.preventDefault();
-
-        const artistSearchUrl =
-            API_BASE +
-            '/search/artists.json?apikey=' +
-            API_KEY +
-            '&' +
-            'query=' +
-            encodeURI(document.getElementById('artist_name').value);
-
-        const spotifyArtistUrl =
-            'https://api.spotify.com/v1/search?q=' +
-            encodeURI(document.getElementById('artist_name').value) +
-            '&type=artist';
-
-        // Call the `search/artist` endpoint
-        return Promise.all([
-            fetchJSON(artistSearchUrl),
-            fetchJSON(spotifyArtistUrl, {
-                headers: { Authorization: `Bearer ${spotifyAccessToken}` },
-            }),
-        ])
-            .then(res => {
-                if (Object.keys(res[0].resultsPage.results).length === 0) {
-                    console.log('Insert Alert: We never heard of this band');
-                }
-
-                const artistOnTour =
-                    res[0].resultsPage.results.artist[0].onTourUntil;
-                if (artistOnTour === null) {
-                    console.log('Insert Alert: Band not on Tour');
-                }
-                console.log(res[1]);
-                const artistImageUrl = res[1].artists.items[0].images[0].url;
-
-                document.getElementById(
-                    'artist_image'
-                ).innerHTML = `<img width="200" height="200" src="${artistImageUrl}"/>`;
-
-                let artistId = res[0].resultsPage.results.artist[0].id;
-                const similarArtists =
-                    API_BASE +
-                    '/artists/' +
-                    artistId +
-                    '/similar_artists.json?apikey=' +
-                    API_KEY;
-
-                let eventUrl =
-                    API_BASE +
-                    '/artists/' +
-                    artistId +
-                    '/calendar.json?apikey=' +
-                    API_KEY;
-
-                return Promise.all([
-                    fetchJSON(eventUrl),
-                    fetchJSON(similarArtists),
-                ]);
-            })
-            .then(res => {
-                const allSimilarArtists = res[1].resultsPage.results.artist;
-
-                console.log(allSimilarArtists);
-
-                function getSimilarArtistCalendar(simArtistId) {
-                    let eventUrl =
-                        API_BASE +
-                        '/artists/' +
-                        simArtistId +
-                        '/calendar.json?apikey=' +
-                        API_KEY;
-
-                    fetch(eventUrl).then(res => {
-                        console.log('called getSimilarArtistCalendar');
-                        console.log(res);
-                        console.log(res.json());
-                        return res.json();
-                    });
-                }
-
-                document.getElementById(
-                    'sm_artist_list'
-                ).innerHTML = `<li></li>`;
-
-                for (let simArt of allSimilarArtists) {
-                    if (!!simArt.onTourUntil) {
-                        const li = document.createElement('li');
-
-                        const button = document.createElement('input');
-                        button.setAttribute('type', 'button');
-                        button.setAttribute('class', 'simArtButton');
-                        button.addEventListener('click', () => {
-                            getSimilarArtistCalendar(simArt.id);
-                        });
-
-                        const artistNameSpan = document.createElement('span');
-                        artistNameSpan.innerText = simArt.displayName;
-
-                        li.append(button);
-                        li.append(artistNameSpan);
-
-                        document.getElementById('sm_artist_list').append(li);
-                    }
-                }
-
-                const allEvents = res[0].resultsPage.results.event;
-                console.log(allEvents);
-                const centerCoords = new google.maps.LatLng(
-                    allEvents[0].venue.lat,
-                    allEvents[0].venue.lng
-                );
-                basicMap.setCenter(centerCoords);
-                basicMap.setZoom(4);
-
-                // reset markers and polyline
-                if (mapMarkers.length > 0) {
-                    mapMarkers.forEach(function(marker) {
-                        marker.setMap(null);
-                    });
-
-                    polyline.setMap(null);
-
-                    mapMarkers = [];
-                }
-                plotAllEvents(allEvents, mapMarkers);
-
-                if (mapMarkers.length > 0) {
-                    const coordList = mapMarkers.map(function(marker) {
-                        return {
-                            lat: marker.position.lat(),
-                            lng: marker.position.lng(),
-                        };
-                    });
-
-                    polyline = new google.maps.Polyline({
-                        path: coordList,
-                        geodesic: true,
-                        strokeColor: '#ff0000',
-                        strokeOpacity: 1.0,
-                        strokeWeight: 5,
-                    });
-
-                    polyline.setMap(basicMap);
-
-                    mapMarkers.forEach(function(marker) {
-                        marker.setMap(basicMap);
-                    });
-                }
-
-                console.log('SUCCESS', res);
-            })
-            .catch(err => {
-                console.log('ERROR', err);
-            });
-    });
+    return mapMarkers;
 }
 
-function getAccessToken() {
-    return fetchJSON(spotifyBase, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${b64}`,
-        },
-        body: 'grant_type=client_credentials',
-    }).then(res => {
-        return res.access_token;
-    });
+function plotAllEvents(centerCoords, mapMarkers, polyline) {
+    basicMap.setCenter(centerCoords);
+    basicMap.setZoom(4);
+
+    for (let i = 0; i < mapMarkers.length; i++) {
+        mapMarkers[i].setMap(basicMap);
+    }
+
+    polyline.setMap(basicMap);
 }
 
-function fetchJSON(url, options = {}) {
-    return fetch(url, options).then(res => res.json());
+function clearMap(mapMarkers, polyline) {
+    for (let i = 0; i < mapMarkers.length; i++) {
+        mapMarkers[i].setMap(null);
+    }
+
+    mapMarkers = [];
+
+    if (polyline !== undefined) {
+        polyline.setMap(null);
+    }
 }
-// document.getElementById(
-//     'sm_artist_list'
-// ).innerHTML = `<li></li>`;
-
-// for (let smA of allSimilarArtists) {
-
-//     if (!!smA.onTourUntil) {
-//         document.getElementById('sm_artist_list').innerHTML +=
-//             '<li>' +
-//             '<a target="artist_form" href=' +
-//             fetchJSON(eventUrl) +
-//             '/>' +
-//             smA.displayName +
-//             '</li>';
-//     }
-// }

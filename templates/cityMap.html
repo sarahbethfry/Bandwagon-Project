@@ -8,8 +8,7 @@
     defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap"
 ></script>
-
-{% endblock %} {% block body %}
+{% block body %} {% endblock %}
 <h2>Shows In Your City</h2>
 <div class="city_date_container">
     <form id="city_date_form">
@@ -27,5 +26,4 @@
         <div id="map"></div>
     </section>
 </main>
-
 {% endblock %}

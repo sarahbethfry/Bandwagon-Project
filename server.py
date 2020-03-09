@@ -23,7 +23,7 @@ def city_date_search():
 
 @app.route("/register", methods=['GET'])    
 def register_page():
-    return render_template("register_form.html")
+    return render_template("userRegister.html")
 
 @app.route("/register", methods=['POST'])
 def register_process():
@@ -54,7 +54,7 @@ def register_process():
 
 @app.route("/login", methods=['GET'])
 def login_page():
-    return render_template("login_form.html")
+    return render_template("userLogin.html")
 
 @app.route("/login", methods=['POST'])
 def login_process():
