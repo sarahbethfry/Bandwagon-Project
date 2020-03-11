@@ -48,12 +48,19 @@ async function init(accessToken) {
                 accessToken,
                 searchValue
             );
-
+            document.getElementById('artist_info').style.left = '20px';
+            console.log(document.getElementById('artist_info'));
             document.getElementById(
                 'artist_image'
             ).innerHTML = `<img width="200" height="200" src="${artistImageUrl}"/>`;
 
-            await getSimilarArtistsOnTour(artistId);
+            const allSimilar = await getSimilarArtistsOnTour(artistId);
+            for (let eachArtist of allSimilar) {
+                if (!!eachArtist.onTourUntil) {
+                    document.getElementById('sm_artist_list').innerHTML +=
+                        '<li>' + eachArtist.displayName + '</li>';
+                }
+            }
         });
 }
 
@@ -101,14 +108,8 @@ async function getSimilarArtistsOnTour(artistId) {
     const result = await fetchJSON(
         `${API_BASE}/artists/${artistId}/similar_artists.json?apikey=${API_KEY}`
     );
-    const simArtDict = {};
-    const allSimilar = result.resultsPage.results.artist;
-    for (let eachArtist of allSimilar) {
-        if (!!eachArtist.onTourUntil) {
-            document.getElementById('sm_artist_list').innerHTML +=
-                '<li>' + eachArtist.displayName + '</li>';
-        }
-    }
+    // const simArtDict = {};
+    return result.resultsPage.results.artist;
 }
 
 async function getArtistCalendar(artistId) {
@@ -137,7 +138,7 @@ function createPolyline(mapMarkers) {
         path: 'M 0,-1 0,1',
         strokeOpacity: 1,
         scale: 4,
-        strokeColor: '#813772',
+        strokeColor: '#4b2b31',
     };
 
     return new google.maps.Polyline({
@@ -208,9 +209,12 @@ function createMapMarkers(allEvents) {
         // show infowindows when you mouseover markers
         showMarker.setAnimation(google.maps.Animation.DROP);
         showMarker.addListener('mouseover', () => {
-            showInfo.close();
             showInfo.setContent(showInfoContent);
-            showInfo.open(map, showMarker);
+            showInfo.open(basicMap, showMarker);
+        });
+
+        showMarker.addListener('mouseout', () => {
+            showInfo.close();
         });
         //  put all marker coordinates in an array
         mapMarkers.push(showMarker);

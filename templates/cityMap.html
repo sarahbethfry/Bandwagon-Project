@@ -8,22 +8,24 @@
     defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap"
 ></script>
-{% block body %} {% endblock %}
-<h2>Shows In Your City</h2>
-<div class="city_date_container">
-    <form id="city_date_form">
-        City: <input id="city_name" />
+{% endblock %}{% block body %}
 
-        <br />
-        Date(s): <input type="date" id="start" name="startDate" />
-        <input type="date" id="end" name="endDate" />
-        <br />
-        <button id="submit" type="submit">Submit</button>
-    </form>
+<div class="city_date_container">
+    <div id="city_info">
+        <form id="city_date_form">
+            City: <input id="city_name" />
+
+            <br />
+            Date(s): <input type="date" id="start" name="startDate" />
+            <input type="date" id="end" name="endDate" />
+            <br />
+            <button id="submit" type="submit">Submit</button>
+        </form>
+    </div>
+    <main>
+        <section class="map">
+            <div id="map"></div>
+        </section>
+    </main>
 </div>
-<main>
-    <section class="map">
-        <div id="map"></div>
-    </section>
-</main>
 {% endblock %}
