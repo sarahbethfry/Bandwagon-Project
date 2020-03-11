@@ -26,7 +26,6 @@ async function init() {
             searchMinDate,
             searchMaxDate
         );
-        console.log('pages', totalPages);
         const allEvents = await paginateEvents(totalPages, metroId);
         console.log(allEvents);
         clearMap(mapMarkers);
@@ -41,6 +40,7 @@ async function citySearch(value) {
     const result = await fetchJSON(
         `${API_BASE}/search/locations.json?&query=${value}&apikey=${API_KEY}`
     );
+    console.log(result);
     return result.resultsPage.results.location[0].metroArea.id;
 }
 async function dateSearch(metroId, minDate, maxDate) {
@@ -83,8 +83,8 @@ async function paginateEvents(totalPages, metroId) {
 }
 
 function getCenterCoords(allEvents) {
-    const cityLat = allEvents[2].location.lat;
-    const cityLng = allEvents[2].location.lng;
+    const cityLat = allEvents[0].location.lat;
+    const cityLng = allEvents[0].location.lng;
     return new google.maps.LatLng(cityLat, cityLng);
 }
 
@@ -149,15 +149,11 @@ function createMapMarkers(allEvents) {
         });
 
         showMarker.setAnimation(google.maps.Animation.DROP);
-        showMarker.addListener('mouseover', () => {
+
+        showMarker.addListener('click', () => {
+            showInfo.close();
             showInfo.setContent(showInfoContent);
             showInfo.open(basicMap, showMarker);
-        });
-
-        showMarker.addListener('mouseout', () => {
-            setTimeout(function() {
-                showInfo.close();
-            }, 2000);
         });
 
         mapMarkers.push(showMarker);

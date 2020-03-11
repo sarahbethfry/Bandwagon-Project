@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Bandwagon</title>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script
+            src="https://kit.fontawesome.com/18a9912b31.js"
+            crossorigin="anonymous"
+        ></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap"
+            rel="stylesheet"
+        />
         <link rel="stylesheet" href="/static/base.css" />
 
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"          
-        ></script>
-
-            {% if "user_id" in session %}
-        <a id="reglog" href="/logout">Logout</a>
-        <a id="reglog" href="/userevents/{{session['user_id']}}">
-            Check your favorite events</a
-        >
-        {% else %}
-        <a id="reglog" href="/login"> Click here to dance</a>
-        <a id="reglog" href="/register"> New Dancer?</a>
-        </br>
-          <a href="/artist"> Artist Search</a>
-        <a href="/citydate"> City/Date Search</a>
-        {% endif %}
         {% block head %} {% endblock %}
     </head>
     <body>
+        <div class="homepage_container">
+            <div class="logo">
+                <h1>Bandwagon</h1>
+                <i class="fas fa-music"></i>
+            </div>
+            <div class="nav">
+                {% if "user_id" in session %}
+                <a class="userstuff" href="/logout">Logout</a>
+                <a class="userstuff" href="/userevents/{{session['user_id']}}">
+                    Check your favorite events</a
+                >
+                {% else %}
+                <a class="userstuff" href="/login"> Click here to dance</a>
+                <a id="reglog" class="userstuff" href="/register">
+                    New Dancer?</a
+                >
+                {% endif %}
+            </div>
+        </div>
+        {% for flash in get_flashed_messages() %} {{ flash }} {% endfor %}
+        <div class="sub_nav">
+            <a class="artview" href="/artist"> Artist Search</a>
+            <a class="cityview" href="/citydate"> City/Date Search</a>
+        </div>
+        <div class="clear_float"></div>
 
-        <hr />
-        {% for flash in get_flashed_messages() %} {{ flash }} {% endfor %} 
-
-        {%
-        block body %} {% endblock %}
+        {%block body %} {% endblock %}
     </body>
 </html>

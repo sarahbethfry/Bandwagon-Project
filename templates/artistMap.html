@@ -11,21 +11,25 @@
 ></script>
 
 {% endblock %} {% block body %}
-<h2>Map Your Artists</h2>
-<div class="artist_container">
-    <form id="artist_form">
-        Artist Name:<input id="artist_name" />
-        <br />
-        <button id="submit" type="submit">Submit</button>
-    </form>
+<div id="artist_info" class="artist_info">
     <div id="artist_image"></div>
+    <div class="similar_artists">
+        <ul id="sm_artist_list"></ul>
+    </div>
+</div>
+
+<div class="artist_container">
+    <div class="artist_input_container">
+        <form class="artist_form" id="artist_form">
+            <label for="artist_name">Artist Name:</label>
+            <input class="arist_input" id="artist_name" />
+            <button id="submit" type="submit">Submit</button>
+        </form>
+    </div>
     <main>
         <section class="map">
             <div id="map"></div>
         </section>
     </main>
-    <div class="similar_artists">
-        <ul id="sm_artist_list"></ul>
-    </div>
 </div>
 {% endblock %}
