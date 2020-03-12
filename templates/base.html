@@ -30,20 +30,55 @@
                     Check your favorite events</a
                 >
                 {% else %}
-                <a class="userstuff" href="/login"> Click here to dance</a>
-                <a id="reglog" class="userstuff" href="/register">
-                    New Dancer?</a
+                <a style="text-decoration:none" id="modal-up" class="userstuff"
+                    >Login</a
+                >
+                <a
+                    style="text-decoration:none"
+                    id="reglog"
+                    class="userstuff"
+                    href="/register"
+                >
+                    New to Bandwagon</a
                 >
                 {% endif %}
             </div>
         </div>
         {% for flash in get_flashed_messages() %} {{ flash }} {% endfor %}
+        <div id="login-modal" class="modal">
+            <div class="modal-content">
+                <span id="close" class="close">&times;</span>
+                <form action="/" method="POST">
+                    <h1><b> Get Back On The Wagon</b></h1>
+                    <label> Email: </label>
+                    <input type="text" name="email" />
+                    <br />
+                    <label>Password: </label>
+                    <input type="password" name="password" />
+                    <br />
+                    <button id="log-submit" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
         <div class="sub_nav">
-            <a class="artview" href="/artist"> Artist Search</a>
-            <a class="cityview" href="/citydate"> City/Date Search</a>
+            <form action="/artist">
+                <button class="artview" type="submit">
+                    Artist Search
+                </button>
+            </form>
+            <form action="/citydate">
+                <button class="cityview" type="submit">
+                    City/Date Search
+                </button>
+            </form>
         </div>
         <div class="clear_float"></div>
-
+        <script src="/static/userLogin.js"></script>
         {%block body %} {% endblock %}
     </body>
+    <script
+        async
+        defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap"
+    ></script>
 </html>

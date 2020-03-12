@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = "HORSE"
 app.jinja_env.undefined = StrictUndefined
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def index():
     return render_template("artistMap.html")
 
@@ -28,9 +28,6 @@ def register_page():
 @app.route("/register", methods=['POST'])
 def register_process():
     """Process registration."""
-
-    # Get form variables
-    
     username = request.form.get("username")
     email = request.form.get("email")
     password = request.form.get("password")
@@ -41,7 +38,7 @@ def register_process():
 
     if same_email:
         flash(f"{same_email} already exitsts. Please login.")
-        return redirect("/login")
+        return redirect("/")
 
     db.session.add(new_user)
     db.session.commit()
@@ -52,11 +49,11 @@ def register_process():
     return redirect("/")
 
 
-@app.route("/login", methods=['GET'])
-def login_page():
-    return render_template("userLogin.html")
+# @app.route("/", methods=['GET'])
+# def login_page():
+#     return render_template("base.html")
 
-@app.route("/login", methods=['POST'])
+@app.route("/", methods=['POST'])
 def login_process():
     email = request.form["email"]
     password = request.form["password"]
@@ -65,10 +62,10 @@ def login_process():
 
     if not user:
         flash("No such user")
-        return redirect ("/login")
+        return redirect ("/")
     if user.password != password:
         flash("Incorrect Password")
-        return redirect ("/login")
+        return redirect ("/")
 
     session["user_id"] = user.user_id
 
@@ -107,7 +104,7 @@ def add_user_events():
         return redirect(f'/userevents/{user_id}')
     else:
         flash(f"You need to be logged in to do that!")
-        return redirect("/login")
+        return redirect("/")
 
 
 @app.route('/logout')

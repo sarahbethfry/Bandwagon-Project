@@ -4,15 +4,12 @@
 <script src="/static/map.js"></script>
 <script src="/static/artistMap.js"></script>
 
-<script
-    async
-    defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxXTEHerpr6Pll-YjnzLhh-nemaajFuBY&callback=initMap"
-></script>
 
 {% endblock %} {% block body %}
 <div id="artist_info" class="artist_info">
+    <h2 id="artist_title"></h2>
     <div id="artist_image"></div>
+    <b>Similar Artists:<b>
     <div class="similar_artists">
         <ul id="sm_artist_list"></ul>
     </div>
@@ -26,10 +23,8 @@
             <button id="submit" type="submit">Submit</button>
         </form>
     </div>
-    <main>
-        <section class="map">
-            <div id="map"></div>
-        </section>
+    <main>       
+        <div id="map"></div>
     </main>
 </div>
 {% endblock %}

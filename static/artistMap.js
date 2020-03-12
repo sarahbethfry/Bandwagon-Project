@@ -32,7 +32,8 @@ async function init(accessToken) {
             const searchValue = getInputValue();
 
             // Songkick address that returns artist info when search name as a query.
-            const artistId = await searchArtistId(searchValue);
+            const { artistId, displayName } = await searchArtist(searchValue);
+            console.log(artistId, displayName);
             const allEvents = await getArtistCalendar(artistId);
 
             clearMap(mapMarkers, polyline);
@@ -48,19 +49,24 @@ async function init(accessToken) {
                 accessToken,
                 searchValue
             );
+
             document.getElementById('artist_info').style.left = '20px';
-            console.log(document.getElementById('artist_info'));
+            document.getElementById('artist_title').innerHTML = displayName;
             document.getElementById(
                 'artist_image'
             ).innerHTML = `<img width="200" height="200" src="${artistImageUrl}"/>`;
 
             const allSimilar = await getSimilarArtistsOnTour(artistId);
+
+            let artistListStr = '';
+
             for (let eachArtist of allSimilar) {
                 if (!!eachArtist.onTourUntil) {
-                    document.getElementById('sm_artist_list').innerHTML +=
-                        '<li>' + eachArtist.displayName + '</li>';
+                    artistListStr += `<li> ${eachArtist.displayName} </li>`;
                 }
             }
+
+            document.getElementById('sm_artist_list').innerHTML = artistListStr;
         });
 }
 
@@ -85,13 +91,17 @@ function getInputValue() {
     return document.getElementById('artist_name').value;
 }
 
-async function searchArtistId(value) {
+async function searchArtist(value) {
     const result = await fetchJSON(
         `${API_BASE}/search/artists.json?apikey=${API_KEY}&query=${encodeURI(
             value
         )}`
     );
-    return result.resultsPage.results.artist[0].id;
+
+    return {
+        displayName: result.resultsPage.results.artist[0].displayName,
+        artistId: result.resultsPage.results.artist[0].id,
+    };
 }
 
 async function spotifyArtistImage(spotifyAccessToken, value) {
@@ -106,7 +116,7 @@ async function spotifyArtistImage(spotifyAccessToken, value) {
 
 async function getSimilarArtistsOnTour(artistId) {
     const result = await fetchJSON(
-        `${API_BASE}/artists/${artistId}/similar_artists.json?apikey=${API_KEY}`
+        `${API_BASE}/artists/${artistId}/similar_artists.json?apikey=${API_KEY}&per_page=10`
     );
     // const simArtDict = {};
     return result.resultsPage.results.artist;
@@ -165,24 +175,37 @@ function createMapMarkers(allEvents) {
 
         const showInfoContent = `
                   <div class="window-content">
-                  <p class="show-info">
+                  <div class="window-header">
 
-                  <h1> <b>${event.performance[0].displayName}</b></h1>
+                  <h1>${event.performance[0].displayName}</h1>
                     <br>
-                    <p>${event.venue.displayName}</p>
-                    <p>${event.location.city}</p>
-                    <span>${event.start.date} ${event.start.time}</span>
-                    <br>
-                  </p>
-                  </div>
-                    <span><button><a target="_blank" href=${event.uri}>Get more info!</a></button></span>
+                    <p class="iw-date">${moment(event.start.date).format(
+                        'ddd MMM Do'
+                    )}</>
+    
+                    <p class="iw-venue">${event.venue.displayName}</>
+                    <p class="iw-loc">${event.location.city}</>
+                  
+                    <span><button><a style="text-decoration:none, color:#000" target="_blank" href=${
+                        event.uri
+                    }>Get more info!</a></button></span>
+                    </div>
                     <form action="/userevents" method="POST">
-                        <input type="hidden" name="event_name" value="${event.displayName}"/>
-                        <input type="hidden" name="event_date" value="${event.start.date}"/>
-                        <input type="hidden" name="event_venue" value="${event.venue.displayName}"/>
-                        <input type="hidden" name="event_url" value="${event.uri}" />
+                        <input type="hidden" name="event_name" value="${
+                            event.displayName
+                        }"/>
+                        <input type="hidden" name="event_date" value="${
+                            event.start.date
+                        }"/>
+                        <input type="hidden" name="event_venue" value="${
+                            event.venue.displayName
+                        }"/>
+                        <input type="hidden" name="event_url" value="${
+                            event.uri
+                        }" />
                     <button id="add_user_events" type="submit">Add to your shows!</button>
                     </form>
+                    </div>
                   `;
         // for the events that dont play at a veune (festivals)
         // change the marker lat and lng to the city lat and lng.
@@ -191,7 +214,9 @@ function createMapMarkers(allEvents) {
             venueLng = event.location.lng;
         }
 
-        const showInfo = new google.maps.InfoWindow();
+        const showInfo = new google.maps.InfoWindow({
+            maxWidth: 300,
+        });
         // set each lat and lng in a marker
         const showMarker = new google.maps.Marker({
             position: {
@@ -208,14 +233,11 @@ function createMapMarkers(allEvents) {
         // add above text to info windows and add info windows to markers
         // show infowindows when you mouseover markers
         showMarker.setAnimation(google.maps.Animation.DROP);
-        showMarker.addListener('mouseover', () => {
+        showMarker.addListener('click', () => {
             showInfo.setContent(showInfoContent);
             showInfo.open(basicMap, showMarker);
         });
 
-        showMarker.addListener('mouseout', () => {
-            showInfo.close();
-        });
         //  put all marker coordinates in an array
         mapMarkers.push(showMarker);
     }
