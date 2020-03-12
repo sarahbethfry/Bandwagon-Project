@@ -120,22 +120,33 @@ function createMapMarkers(allEvents) {
                     event.uri
                 }>${moment(event.start.date).format('ddd MMM D')}</a> 
                     ${event.displayName}
-                <button id="user_events" type="submit">Add to your shows!</button>
-                </span>
+                <form action="/userevents" method="POST">
+                        <input type="hidden" name="event_name" value="${
+                            event.displayName
+                        }"/>
+                        <input type="hidden" name="event_date" value="${
+                            event.start.date
+                        }"/>
+                        <input type="hidden" name="event_venue" value="${
+                            event.venue.displayName
+                        }"/>
+                        <input type="hidden" name="event_url" value="${
+                            event.uri
+                        }" />
+                    <button id="add_user_events" type="submit">Add to your shows!</button>
+                    </form>
             </li>`;
         });
 
         const showInfoContent = `
-                    <div id="window-container"> 
-                    <div class="window-title">${
-                        currentVenue.venue.displayName
-                    }</div>
-                    <div class="window-subtitle"> Shows </div>
-                    <div id="window_content"> 
+                    <div class="window-content"> 
+                    <div class="window-header">
+                    <h1>${currentVenue.venue.displayName}</h1>
 
+                    <div class="window-subtitle"> Shows </div> 
                     <ul>${venueList.toString()}
                     </ul>
-                    </div>
+                    
                     </div>
                     `;
 
@@ -145,6 +156,10 @@ function createMapMarkers(allEvents) {
                 animation: google.maps.Animation.DROP,
                 lat: venueLat,
                 lng: venueLng,
+            },
+            icon: {
+                url: '/static/images/music_hover.png',
+                scaledSize: new google.maps.Size(60, 85),
             },
         });
 
