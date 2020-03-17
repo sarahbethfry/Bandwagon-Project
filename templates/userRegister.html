@@ -1,11 +1,11 @@
 {% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
 
-<div class="user-reg-container">
+<div class="user-register-container">
     <h1>New to Bandwagon?</h1>
     <br />
     <div class="register-input">
         <h2>Fill out form to register</h2>
-        <form action="register" method="POST">
+        <form class="user_register_form" action="register" method="POST">
             <label> Username: </label>
             <input type="text" name="username" />
             <br />
@@ -15,7 +15,9 @@
             <label> Password: </label>
             <input type="password" name="password" />
             <br />
-            <button id="reg-submit" type="submit">Register</button>
+            <button class="cta-button" id="reg-submit" type="submit">
+                Register
+            </button>
         </form>
     </div>
 </div>
