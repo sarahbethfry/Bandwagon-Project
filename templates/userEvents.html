@@ -5,23 +5,20 @@
 
 <div class="user-events-container">
     <h1><b>Your Shows</b></h1>
-
     <div class="show-info">
-        <div class="col" id="show_something">
-            <ul style="list-style-type:none">
-                {% for u in user %}
-                <span><li>{{ u.event_name }}</li></span>
-                <span><li>{{ u.date }}</li></span>
-                <span><li>{{ u.venue_name }}</li></span>
-                <button>
-                    <a target="_blank" href="{{ u.songkick_url }}">
-                        Get More Info!</a
-                    >
-                </button>
-                {% endfor %}
-            </ul>
-            <hr />
-        </div>
+        <ul style="list-style-type:none">
+            {% for u in user %}
+            <li>
+                <span>{{ u.event_name }}</span>
+                <span>{{ u.date }}</span>
+                <span>{{ u.venue_name }}</span>
+                <a target="_blank" href="{{ u.songkick_url }}">
+                    Get More Info!
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <hr />
     </div>
 </div>
 {% endblock %}

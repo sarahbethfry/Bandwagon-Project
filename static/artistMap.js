@@ -177,18 +177,20 @@ function createMapMarkers(allEvents) {
                   <div class="window-content">
                   <div class="window-header">
 
-                  <h1>${event.performance[0].displayName}</h1>
-                    <br>
-                    <p class="iw-date">${moment(event.start.date).format(
-                        'ddd MMM Do'
-                    )}</>
-    
-                    <p class="iw-venue">${event.venue.displayName}</>
-                    <p class="iw-loc">${event.location.city}</>
-                  
-                    <span><button><a style="text-decoration:none, color:#000" target="_blank" href=${
+                  <h1>${
+                      event.performance[0].displayName
+                  }</h1>                    
+                    <p>
+                    ${moment(event.start.date).format('ddd MMM Do')}
+                    <br/>
+                    ${event.venue.displayName}
+                    <br/>
+                    ${event.location.city}
+                    </p>
+                    <a style="text-decoration:none, color:#000" target="_blank" href=${
                         event.uri
-                    }>Get more info!</a></button></span>
+                    }>Get more info!</a>
+                    <br/>
                     </div>
                     <form action="/userevents" method="POST">
                         <input type="hidden" name="event_name" value="${
@@ -203,7 +205,8 @@ function createMapMarkers(allEvents) {
                         <input type="hidden" name="event_url" value="${
                             event.uri
                         }" />
-                    <button id="add_user_events" type="submit">Add to your shows!</button>
+
+                    <button class="cta-button" id="add_user_events" type="submit">Add to your shows!</button>
                     </form>
                     </div>
                   `;

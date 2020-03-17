@@ -115,11 +115,12 @@ function createMapMarkers(allEvents) {
 
         const venueList = currentVenue.events.map(function(event) {
             return `<li>
-               <span> 
-                <a target="_blank"href=${
-                    event.uri
-                }>${moment(event.start.date).format('ddd MMM D')}</a> 
-                    ${event.displayName}
+                <a target="_blank"href=${event.uri}>${event.displayName}</a>
+                <div class="clear_float"><div> 
+                <div class="date">    
+                    ${moment(event.start.date).format('ddd MMM D')}
+                </div>
+                <div class="cta">
                 <form action="/userevents" method="POST">
                         <input type="hidden" name="event_name" value="${
                             event.displayName
@@ -133,20 +134,23 @@ function createMapMarkers(allEvents) {
                         <input type="hidden" name="event_url" value="${
                             event.uri
                         }" />
-                    <button id="add_user_events" type="submit">Add to your shows!</button>
+                    <button class="cta-button" id="add_user_events" type="submit">Add to your shows!</button>
                     </form>
+                </div>
             </li>`;
         });
 
         const showInfoContent = `
                     <div class="window-content"> 
-                    <div class="window-header">
-                    <h1>${currentVenue.venue.displayName}</h1>
-
-                    <div class="window-subtitle"> Shows </div> 
-                    <ul>${venueList.toString()}
-                    </ul>
-                    
+                        <div class="window-header">
+                            <h1>${currentVenue.venue.displayName}</h1>
+                        </div>
+                        
+                        <div class="window-subtitle"> Shows </div> 
+                        
+                        <ul>
+                            ${venueList}
+                        </ul>                        
                     </div>
                     `;
 

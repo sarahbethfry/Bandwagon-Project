@@ -9,6 +9,8 @@
             src="https://kit.fontawesome.com/18a9912b31.js"
             crossorigin="anonymous"
         ></script>
+        <script src="/static/config.js"></script>
+        <script src="/static/map.js"></script>
         <link
             href="https://fonts.googleapis.com/css2?family=Bree+Serif&display=swap"
             rel="stylesheet"
@@ -30,15 +32,8 @@
                     Check your favorite events</a
                 >
                 {% else %}
-                <a style="text-decoration:none" id="modal-up" class="userstuff"
-                    >Login</a
-                >
-                <a
-                    style="text-decoration:none"
-                    id="reglog"
-                    class="userstuff"
-                    href="/register"
-                >
+                <a id="modal-up" class="userstuff">Login</a>
+                <a id="reglog" class="userstuff" href="/register">
                     New to Bandwagon</a
                 >
                 {% endif %}
@@ -48,7 +43,7 @@
         <div id="login-modal" class="modal">
             <div class="modal-content">
                 <span id="close" class="close">&times;</span>
-                <form action="/" method="POST">
+                <form class="modal_form" action="/" method="POST">
                     <h1><b> Get Back On The Wagon</b></h1>
                     <label> Email: </label>
                     <input type="text" name="email" />
@@ -56,26 +51,22 @@
                     <label>Password: </label>
                     <input type="password" name="password" />
                     <br />
-                    <button id="log-submit" type="submit">Login</button>
+                    <button class="cta-button" id="log-submit" type="submit">
+                        Login
+                    </button>
                 </form>
             </div>
         </div>
         <div class="sub_nav">
-            <form action="/artist">
-                <button class="artview" type="submit">
-                    Artist Search
-                </button>
-            </form>
-            <form action="/citydate">
-                <button class="cityview" type="submit">
-                    City/Date Search
-                </button>
-            </form>
+            <a href="/">
+                Artist Search
+            </a>
+            <a href="/citydate">City/Date Search</a>
         </div>
         <div class="clear_float"></div>
-        <script src="/static/userLogin.js"></script>
         {%block body %} {% endblock %}
     </body>
+    <script src="/static/userLogin.js"></script>
     <script
         async
         defer
