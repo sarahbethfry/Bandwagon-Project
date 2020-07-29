@@ -3,7 +3,7 @@
 <br>
 <a href="http://bandwagon.cool/"> [Bandwagon.cool]</a>
  
-Bandwagon leverages geographic data to let users search for live music by artist or city and the results are mapped in a fun and informative way. Users are also able to save their favorite shows to their profile, so they can track the events they discover.
+Bandwagon is a tool for discovering live music that leverages geographic data to let users search for live music by artist or city and the results are mapped in a fun and informative way. Users are also able to save their favorite shows to their profile, so they can track the events they discover.
 
 </p>
 
