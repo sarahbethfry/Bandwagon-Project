@@ -20,24 +20,29 @@ Bandwagon leverages geographic data to let users search for live music by artist
 
 
 ## City/Date Search
+
 * Search by a city and a range of dates to map all live music events by their venue.
-<br>
+
 <img width="600" alt="Screen Shot 2020-07-29 at 2 27 54 PM" src="https://user-images.githubusercontent.com/59486008/88855545-e6ca9080-d1a7-11ea-85d2-eb06845048cb.png">
 
 * Able to click venue icon and view details about any number of events that are taking place over the date range searched for.
-<br>
+
 <img width="493" alt="Screen Shot 2020-07-29 at 3 19 39 PM" src="https://user-images.githubusercontent.com/59486008/88859628-f3061c00-d1ae-11ea-98c3-096d4bfaffec.png">
 
 
-* When users create an account they are able to login and save shows they are interested in.
-  * Create an account:<br>
-    <img width="500" alt="Screen Shot 2020-07-29 at 2 39 28 PM" src="https://user-images.githubusercontent.com/59486008/88856682-c0a5f000-d1a9-11ea-9ec9-5bd4e54730ce.png">
+## User Profile
+
+* Create an account:
+
+<img width="500" alt="Screen Shot 2020-07-29 at 2 39 28 PM" src="https://user-images.githubusercontent.com/59486008/88856682-c0a5f000-d1a9-11ea-9ec9-5bd4e54730ce.png">
   
-  * Login:<br>
-    <img width="500" alt="Screen Shot 2020-07-29 at 2 44 21 PM" src="https://user-images.githubusercontent.com/59486008/88856853-14183e00-d1aa-11ea-8bef-d988d4818c4c.png">
+* Login:
+
+<img width="500" alt="Screen Shot 2020-07-29 at 2 44 21 PM" src="https://user-images.githubusercontent.com/59486008/88856853-14183e00-d1aa-11ea-8bef-d988d4818c4c.png">
   
-  * Add shows to your profile:<br>
-    <img width="1429" alt="Screen Shot 2020-07-29 at 2 41 54 PM" src="https://user-images.githubusercontent.com/59486008/88856931-3ad67480-d1aa-11ea-865f-28190bd72de2.png">
+* Add shows to your profile:
+
+<img width="1429" alt="Screen Shot 2020-07-29 at 2 41 54 PM" src="https://user-images.githubusercontent.com/59486008/88856931-3ad67480-d1aa-11ea-865f-28190bd72de2.png">
    
 ## API's Used
 
